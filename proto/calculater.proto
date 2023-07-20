@@ -1,0 +1,149 @@
+syntax = "proto3";
+package calculater;
+
+service Calculater {
+	// 请求服务器端本地 RPC
+	rpc GetModelByPath (GetModelByPathRequest) returns (GetModelByPathResponse);
+	rpc Encode (EncodeRequest) returns (EncodeResponse);
+	rpc PreProcess (PreProcessRequest) returns (PreProcessResponse);
+	rpc RotrayEmb (RotrayEmbRequest) returns (RotrayEmbResponse);
+	// 请求客户端本地 RPC
+	rpc LoadModel (LoadModelRequest) returns (LoadModelResponse);
+	rpc Proj (ProjRequest) returns (ProjResponse);
+	rpc Score (ScoreRequest) returns (ScoreResponse);
+	rpc FeedForward (FeedForwardRequest) returns (FeedForwardResponse);
+	rpc Out (OutRequest) returns (OutResponse);
+}
+
+// 一维
+message Array {
+  repeated float value = 1;
+}
+
+message ArrayInt {
+  repeated int64 value = 1;
+}
+
+// 二维
+message Matrix {
+  repeated Array array = 1;
+}
+
+message MatrixInt {
+  repeated ArrayInt array = 1;
+}
+
+message MatrixComplex {
+  repeated Array real_array = 1;
+  repeated Array imag_array = 2;
+}
+
+
+// 三维
+message Tensor {
+  repeated Matrix matrix = 1;
+}
+
+// 四维
+message BszTensor {
+  repeated Tensor tensor = 1;
+}
+
+message GetModelByPathRequest {
+}
+
+message GetModelByPathResponse {
+	repeated CombinedMatrix matrix = 1;
+}
+
+message EncodeRequest {
+	int64 start_pos = 1;
+	repeated string input = 2;
+}
+
+
+message EncodeResponse {
+	int64 start_pos = 1;
+	MatrixInt tokens = 2;
+}
+
+message CombinedMatrix {
+	string name = 1;
+	bytes data = 2;
+}
+
+message PreProcessRequest {
+	int64 start_pos = 1;
+	MatrixInt tokens = 2;
+}
+
+message PreProcessResponse {
+	int64 start_pos = 1;
+	Tensor h = 2;
+	MatrixComplex freqs_cis = 3;
+	Matrix mask = 4;
+}
+
+message RotrayEmbRequest {
+	int64 i = 1;
+	int64 start_pos = 2;
+	Tensor h = 3;
+	BszTensor xq = 4;
+	BszTensor xk = 5;
+	BszTensor xv = 6;
+	MatrixComplex freqs_cis = 7;
+}
+
+message RotrayEmbResponse {
+	BszTensor xq = 1;
+	BszTensor xk = 2;
+	BszTensor xv = 3;
+}
+
+message LoadModelRequest {
+	string name = 1;
+	bytes data = 2;
+}
+
+message LoadModelResponse {}
+
+
+message ScoreRequest {
+	int64 bsz = 1;
+	int64 seqlen = 2;
+	string name = 3;
+	BszTensor xq = 4;
+	BszTensor xk = 5;
+	BszTensor xv = 6;
+	Matrix mask = 7;
+}
+
+message ScoreResponse {
+	Tensor h = 1;
+}
+
+message ProjRequest {
+	string name = 1;
+	Tensor h = 2;
+}
+
+message ProjResponse {
+	BszTensor x = 1;
+}
+
+message FeedForwardRequest {
+	string name = 1;
+	Tensor h = 2;
+}
+
+message FeedForwardResponse {
+	Tensor h = 1;
+}
+
+message OutRequest {
+	Tensor h = 2;
+}
+
+message OutResponse {
+	Matrix output = 1;
+}

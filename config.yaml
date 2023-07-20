@@ -1,0 +1,14 @@
+max_seq_len: 1024
+max_batch_size: 1 
+n_layers: 1 # 模型深度
+dim: 512 # 模型维度
+n_heads: 8 # 
+vocab_size: -1 
+multiple_of: 256  
+norm_eps: 1e-5
+wkv_dim: 64
+freq_size: 32
+model_path: ["./ckpts/t1.npy"]
+tokenizer_path: "./ckpts/tokenizer.model"
+bsz: 1
+seqlen: 32

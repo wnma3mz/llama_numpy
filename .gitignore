@@ -1,3 +1,6 @@
 *.txt
 __pycache__/*
-ckpt/*
+llama/__pycache__/*
+calculater/__pycache__/*
+ckpts/*
+*.npy
